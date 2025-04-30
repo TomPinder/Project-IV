@@ -1,3 +1,4 @@
+#Code to apply aPMMH algorithm to synthetic and real data
 library(mvtnorm)
 library(MASS)
 #rb into the inference
@@ -237,6 +238,7 @@ mh_rb_unobs = function(x_obs, iter, sigma_theta, sigma_x_u, deltatau, N, inter_o
   return(list(psi=mat, x_u=x_u_mat))
 }
 
+#Applying to synthetic data
 set.seed(1)
 sim <- simSIR(762, 1, 0.01, 15, exp(-6), 0.5)
 plot(ts(sim))
@@ -292,6 +294,7 @@ mean(exp(out_part2$psi[,1]))
 mean(exp(out_part2$psi[,2]))
 mean(exp(out_part2$psi[,1])/exp(out_part2$psi[,2])*763)
 
+
 plot(ts(out_part2$x_u[,2:11]))
 plot(ts(out_part2$x_u[,12:16]))
 mean(out_part2$psi[,1])
@@ -323,16 +326,8 @@ x_credint <- function(x){
   }
   return(ci)
 }
-x_u_credint <- x_credint(out$x_u)
-x_u_credint
-plot(ts(x_u_credint[,3]))
-lines(ts(x_u_credint[,2]))
-lines(ts(x_u_credint[,1]))
 
-lines(ts(sim[,1]))
-
-
-#Now using Fuchs influenza dataset
+#Now applying to boys boarding school data
 flu <- c(1, 3, 6, 25, 73, 221, 294, 257, 236, 189, 125,
          67, 26, 10, 3)
 plot(ts(flu), lwd=2, ylab="Number confined to bed", col=2)
@@ -363,6 +358,7 @@ var(outflu3$x_u)
 
 Nvar_rb(x=cbind(x_propflu2, flu), theta=c(exp(-6),0.5), deltatau=0.2, N=5, inter_obs=1, samplesize=5000)
 
+#Summaries
 plot(ts(outflu3$psi[,1]), ylab="log(beta)")
 plot(ts(outflu3$psi[,2]), ylab="log(gamma)")
 plot(ts(outflu3$x_u[,2:11]))
@@ -417,8 +413,5 @@ betahat*763
 quantile(exp(outflu2$psi[,1]), probs=c(0.025, 0.975))
 quantile(exp(outflu3$psi[,2]), probs=c(0.025, 0.975))
 
-#Multiplying my estimate by 763 so comparable with the Fuchs estimate:
-quantile(763*exp(outflu2$psi[,1]), probs=c(0.025, 0.975))
-#Next would like to initialise theta somewhere else and see if I converge on the same values
 
 
